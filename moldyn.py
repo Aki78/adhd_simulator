@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import random
 
 boxSize = 100
-
 def force(a ,X):
     r = X[0]*X[0] + X[1]*X[1]
     # return [-X[0]*a/math.sqrt(r)**3 + 0.001*X[0]*math.exp(0.1/math.sqrt(10*r)), -X[1]*a/math.sqrt(r)**3 + 0.001*X[1]*math.exp(0.1/math.sqrt(10*r))]
@@ -35,9 +34,9 @@ def nextVel(xys,dt,k):
         xys[k][3] = -xys[k][3]
 
     speed = math.sqrt(xys[k][2]**2 + xys[k][3]**2)
-    if speed > 5:
-        xys[k][2] /= 1.5
-        xys[k][3] /= 1.5
+    if speed > 2:
+        xys[k][2] /= 1.2 
+        xys[k][3] /= 1.2
     # elif speed < 0.1:
         # xys[k][2] *= 1.5
         # xys[k][3] *= 1.5
@@ -55,12 +54,17 @@ def nextPoses(xys,dt):
     return newPoses
 
 if __name__=='__main__':
+
+    textfile = open("saved.txt", "a")
+    textfile.write("start" + "\n")
+    textfile.close()
+
     spread= 100
     spreadV=  1
     closest = 10
     xyz = [[random.uniform(-spread,spread), random.uniform(-spread,spread), random.uniform(-spreadV, spreadV), random.uniform(-spreadV, spreadV) ]]
     print(xyz)
-    atomN =5
+    atomN = 10
     addQ = True
     for k in range(0, atomN):
         a = [random.uniform(-spread,spread), random.uniform(-spread,spread), random.uniform(-spreadV, spreadV), random.uniform(-spreadV, spreadV) ]
@@ -82,6 +86,12 @@ if __name__=='__main__':
             print(len(xyz), '', t/1000, xyz)
             x, y, vx, vy = np.array(xyz).T
 
+            textfile = open("saved.txt", "a")
+            for writeX in xyz:
+                textfile.write(str(writeX[0]) + " " +str(writeX[1]) + " " +str(writeX[2]) + " " + str(writeX[3]) + "\n")
+
+            textfile.write("\n")
+            textfile.close()
             plt.scatter(x,y)
             plt.savefig('Images/test' + "{:03d}".format(saveInt) + '.png')
             im = Image.open('Images/test' + "{:03d}".format(saveInt) + '.png')
