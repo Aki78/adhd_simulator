@@ -26,7 +26,6 @@ def forces(xys, k):
 
 def nextVel(xys,dt,k):
     itForce = forces(xys,k)
-    print(itForce)
 
     if abs(xys[k][0]) > boxSize:
         xys[k][2] = -xys[k][2]
@@ -63,8 +62,7 @@ if __name__=='__main__':
     spreadV=  1
     closest = 10
     xyz = [[random.uniform(-spread,spread), random.uniform(-spread,spread), random.uniform(-spreadV, spreadV), random.uniform(-spreadV, spreadV) ]]
-    print(xyz)
-    atomN = 10
+    atomN = 100
     addQ = True
     for k in range(0, atomN):
         a = [random.uniform(-spread,spread), random.uniform(-spread,spread), random.uniform(-spreadV, spreadV), random.uniform(-spreadV, spreadV) ]
@@ -83,7 +81,6 @@ if __name__=='__main__':
             # fig, axs = plt.figure(figsize=(12, 6))
             plt.xlim(-spread, spread)
             plt.ylim(-spread, spread)
-            print(len(xyz), '', t/1000, xyz)
             x, y, vx, vy = np.array(xyz).T
 
             textfile = open("saved.txt", "a")
