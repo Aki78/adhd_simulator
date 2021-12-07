@@ -28,9 +28,10 @@ w = image0.shape[0]
 h = image0.shape[1]
 w = 1.0 * np.arange(20)
 w =np.exp(np.array([0,1,2,3,4,5,6.0])**2)
-seconds = 5
-for t in range(0, 240):
-    x = abs(10*math.sin(t/24/seconds*math.pi))
+seconds_blur = 5
+seconds_run = 10
+for t in range(0, 24*seconds_run):
+    x = abs(10*math.sin(t/24/seconds_blur*math.pi))
     shiftX = 5
     w = get_dist_array(gauss_distribution,6, x - shiftX, 1.5 )
     imageOut =  w[0]*image0 + w[1]*image1 + w[2]*image2 + w[3]*image3 + w[4]*image4 + w[5]*image5 

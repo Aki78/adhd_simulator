@@ -4,6 +4,7 @@ import math
 import ctypes
 import os
 
+
 gausslib = ctypes.CDLL('/home/aki/ADHDSimulator/gausslib.so')
 
 # Read in image
@@ -60,11 +61,20 @@ for x in range(0, kernelWidth ):  # kernelWidth +1?
 # This will cause a thin border around the image that won't be processed
 # os.mkdir('/home/aki/ImagesTest')
 inputImage = inputImage.astype(int)
-for x_v in range(40, 240):
-    Y_CENTER = x_v
+seconds_run = 10
+seconds_osscilate = 10
+
+def get_position(t):
+    x = 100*math.sin(t/math.pi)
+    return x, 400
+
+
+for t in range(0, 24*seconds_run):
+    X_CENTER, Y_CENTER = get_position(t)
+    inImage =cv2.imread('Images/test' + "{:04d}".format(t) + '.jpg') 
+    inImage = inImage.astype(int)
     outputImage = image.copy()
     outputImage = image.astype(int)
-    inputImage = inputImage.astype(int)
     for x in range(radius, inputImage_width - radius ): # +1???
         # # print("X", x)
         # for y in range(radius ,inputImage_height - radius): # +1???
@@ -78,10 +88,10 @@ for x_v in range(40, 240):
 
             if ((x -  X_CENTER)*(x - X_CENTER) + (y - Y_CENTER)*(y - Y_CENTER) >dist_radius2 ):
                 continue
-            gausslib.compute_kernel(  ctypes.c_void_p(kernel.ctypes.data),  ctypes.c_void_p(inputImage.ctypes.data),  ctypes.c_void_p(outputImage.ctypes.data), ctypes.c_int(x), ctypes.c_int(y), ctypes.c_int(radius), ctypes.c_int(kernelWidth), ctypes.c_int(inputImage_width), ctypes.c_int(inputImage_height))
-    print("saved", x_v)
+            gausslib.compute_kernel(  ctypes.c_void_p(kernel.ctypes.data),  ctypes.c_void_p(inImage.ctypes.data),  ctypes.c_void_p(outputImage.ctypes.data), ctypes.c_int(x), ctypes.c_int(y), ctypes.c_int(radius), ctypes.c_int(kernelWidth), ctypes.c_int(inputImage_width), ctypes.c_int(inputImage_height))
+    print("saved", t)
     # print(outputImage)
-    cv2.imwrite('Images/test' + "{:03d}".format(x_v) + '.jpg', outputImage)
+    cv2.imwrite('Images/test_final' + "{:04d}".format(t) + '.jpg', outputImage)
 
 
 
@@ -89,13 +99,3 @@ for x_v in range(40, 240):
 cv2.imshow('outImg', outputImage)
 cv2.imwrite('test.jpg', outputImage)
 # cv2.imshow('image', image)
-import cv2 as cv
-import numpy as np
-from matplotlib import pyplot as plt
-img = cv.imread('opencv-logo-white.png')
-blur = cv.blur(img,(5,5))
-plt.subplot(121),plt.imshow(img),plt.title('Original')
-plt.xticks([]), plt.yticks([])
-plt.subplot(122),plt.imshow(blur),plt.title('Blurred')
-plt.xticks([]), plt.yticks([])
-plt.show()cv2.waitKey()
