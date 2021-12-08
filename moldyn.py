@@ -8,32 +8,33 @@ boxSize = 100
 def force(a ,X):
     r = X[0]*X[0] + X[1]*X[1]
     # return [-X[0]*a/math.sqrt(r)**3 + 0.001*X[0]*math.exp(0.1/math.sqrt(10*r)), -X[1]*a/math.sqrt(r)**3 + 0.001*X[1]*math.exp(0.1/math.sqrt(10*r))]
-    return [-X[0]*a/math.sqrt(r)**3 , -X[1]*a/math.sqrt(r)**3 ]
+    # return [-X[0]*a/math.sqrt(r)**3 , -X[1]*a/math.sqrt(r)**3 ]
+    return [X[0]*a/math.sqrt(r)**3 , X[1]*a/math.sqrt(r)**3 ]
 sigma = 30.1
-epsilon = 100
+epsilon = 3
 # def force(a ,X):
     # return [-4*epsilon*(sigma**12*2*X[0]/(X[0]*X[0] + X[1]*X[1])**7 - sigma**6*2*X[0]/(X[0]*X[0] + X[1]*X[1])**4), -4*epsilon*(sigma**12*2*X[1]/(X[0]*X[0] + X[1]*X[1])**7 - sigma**6*2*X[1]/(X[0]*X[0] + X[1]*X[1])**4)] 
 
-def forces(xys, k):
+def forces_on_k(xys, k):
     sumForce = [0,0]
     for i in range(len(xys)):
         if k != i:
             distVec = [xys[k][0] - xys[i][0], xys[k][1] - xys[i][1]]
             myForce = force(epsilon, distVec)
-            sumForce[0] = myForce[0]
-            sumForce[1] = myForce[1]
+            sumForce[0] += myForce[0]
+            sumForce[1] += myForce[1]
     return sumForce
 
-def nextVel(xys,dt,k):
-    itForce = forces(xys,k)
+def nextVel_for_k(xys,dt,k):
+    itForce = forces_on_k(xys,k)
 
     if abs(xys[k][0]) > boxSize:
-        xys[k][2] = -xys[k][2]
+        xys[k][2] = -xys[k][2] 
     if abs(xys[k][1]) > boxSize:
-        xys[k][3] = -xys[k][3]
+        xys[k][3] = -xys[k][3] 
 
     speed = math.sqrt(xys[k][2]**2 + xys[k][3]**2)
-    if speed > 2:
+    if speed > 3:
         xys[k][2] /= 1.2 
         xys[k][3] /= 1.2
     # elif speed < 0.1:
@@ -41,15 +42,15 @@ def nextVel(xys,dt,k):
         # xys[k][3] *= 1.5
     return [itForce[0]*dt + xys[k][2] , itForce[1]*dt + xys[k][3] ]
 
-def nextPosVel(xys,dt,k):
-    itVelocity = nextVel(xyz, dt, k)
+def nextPosVel_for_k(xys,dt,k):
+    itVelocity = nextVel_for_k(xyz, dt, k)
     return [itVelocity[0]*dt  + xys[k][0] , itVelocity[1]*dt + xys[k][1], itVelocity[0], itVelocity[1]]
 
 
 def nextPoses(xys,dt):
     newPoses = []
     for i in range(len(xyz)):
-        newPoses.append(nextPosVel(xyz,dt,i))
+        newPoses.append(nextPosVel_for_k(xyz,dt,i))
     return newPoses
 
 if __name__=='__main__':
@@ -59,7 +60,7 @@ if __name__=='__main__':
     textfile.close()
 
     spread= 100
-    spreadV=  1
+    spreadV=  10
     closest = 10
     xyz = [[random.uniform(-spread,spread), random.uniform(-spread,spread), random.uniform(-spreadV, spreadV), random.uniform(-spreadV, spreadV) ]]
     atomN = 100
